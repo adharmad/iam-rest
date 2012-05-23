@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="iam-rest" default="buildwar" basedir="..">
+    <target name="init">
+        <property name="SRC_DIR" value="${basedir}/src"/>
+        <property name="BIN_DIR" value="${basedir}/bin"/>
+        <property name="WEB_DIR" value="${basedir}/web"/>
+        <property name="LIB_DIR" value="${basedir}/lib"/>
+        <property name="JAR_DIR" value="${BIN_DIR}/jars"/>
+        <property name="WAR_DIR" value="${BIN_DIR}/war"/>
+        <property name="debug.build" value="true" />
+    	
+    	<property name="JAR_FILE" value="iamrest.jar"/>
+    	<property name="WAR_FILE" value="iamrest.war"/>
+    	
+        <path id="oim.classpath">
+            <fileset dir="${basedir}/lib">
+                <include name="**/*.jar"/>
+            </fileset>
+        </path>
+
+    </target>
+
+    <target name="clean" depends="init">
+        <echo>Deleting the compiled classes, jars and war</echo>
+        <delete dir="${BIN_DIR}/oracle"/>
+        <delete file="${WAR_DIR}/${WAR_FILE}"/>
+    	<delete file="${JAR_DIR}/${JAR_FILE}"/>
+    	<delete file="${JAR_DIR}"/>
+    	<delete dir="${WAR_DIR}"/>
+    	
+    	<mkdir dir="${JAR_DIR}"/>
+    	<mkdir dir="${WAR_DIR}"/>
+    </target>
+	
+    <target name="compile" depends="init">
+        <mkdir dir="${BIN_DIR}"/>
+
+    	<echo>Compiling the classes</echo>
+    	<javac srcdir="${SRC_DIR}"
+               destdir="${BIN_DIR}"
+               classpathref="oim.classpath"
+               debug="${debug.build}"
+        	   compiler="modern"  
+         >
+            <include name="**/*.java"/>
+        </javac>
+    </target>
+    
+    <target name="buildjar" depends="init,compile">
+        <mkdir dir="${JAR_DIR}"/>
+
+    	<jar jarfile="${JAR_DIR}/${JAR_FILE}"
+    		basedir="${BIN_DIR}"
+    		includes="oracle/iam/webservice/**"
+    		>
+    	</jar>
+    </target>
+
+    <target name="buildwar" description="Build War Files" depends="buildjar">
+        <!-- create a temporary directory to assemble the files that will be WAR'ed -->
+        <copy todir="${WAR_DIR}">
+            <fileset dir="${WEB_DIR}"/>
+        </copy>
+
+        <!-- copy the necessary JAR files -->
+        <copy todir="${WAR_DIR}/WEB-INF/lib">
+        	<fileset dir="${LIB_DIR}">
+                <include name="**/*.jar"/>
+            </fileset>
+            <mapper type="flatten"/>
+        </copy>
+    	
+        <copy todir="${WAR_DIR}/WEB-INF/classes">
+            <fileset dir="${BIN_DIR}">
+                <include name="**/*.class"/>
+            </fileset>
+        </copy>    	
+
+        <!-- create the WAR file for the web application -->
+        <jar jarfile="${WAR_DIR}/${WAR_FILE}"
+             basedir="${WAR_DIR}">
+    	</jar>
+    </target>
+</project>
+

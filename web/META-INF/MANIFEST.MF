@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: 16.0-b13 (Sun Microsystems Inc.)
+Class-Path: xlUtils.jar xlCache.jar xlAPI.jar xlAuthentication.jar xlLogger.jar log4j-1.2.8.jar xlDataObjectBeans.jar commons-logging.jar
